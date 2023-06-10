@@ -1,12 +1,16 @@
 import 'package:application_docteur/Ecrans/Auth_page.dart';
 import 'package:application_docteur/Ecrans/Liste_rendez_vous.dart';
 import 'package:application_docteur/Ecrans/details_docteur.dart';
+import 'package:application_docteur/Ecrans/reservation_reussi.dart';
 import 'package:application_docteur/main_layout.dart';
 import 'package:application_docteur/utils/config.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
+  initializeDateFormatting('fr_FR', null).then((_) {
   runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -47,6 +51,7 @@ class MyApp extends StatelessWidget {
         "main" :(context) => const mainLayout(),
         "Doc_details": (context) => const DetailsDocteur(),
         "ListeRendezVous" : (context) => const ListeRendezVous(),
+        "reservationReussie" : (context) => const RendezvousReserver(),
       },
     );
   }

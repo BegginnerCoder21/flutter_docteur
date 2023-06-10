@@ -11,7 +11,7 @@ class PageRendezVous extends StatefulWidget {
   State<PageRendezVous> createState() => _PageRendezVousState();
 }
 
-enum FiltrerStatut { upcoming, completed, cancel }
+enum FiltrerStatut { Encours, Complete, Annuler }
 
 class _PageRendezVousState extends State<PageRendezVous> {
   List<dynamic> schedules = [
@@ -19,29 +19,29 @@ class _PageRendezVousState extends State<PageRendezVous> {
       "nom_docteur": "Dr Ayanokôji Kiyotaka",
       "image_docteur": "assets/docteur2.jpg",
       "category": "Dentiste",
-      "statut": FiltrerStatut.upcoming
+      "statut": FiltrerStatut.Encours
     },
     {
       "nom_docteur": "Dr Suzuya Juzo",
       "image_docteur": "assets/docteur3.jpg",
       "category": "Cardiologue",
-      "statut": FiltrerStatut.completed
+      "statut": FiltrerStatut.Complete
     },
     {
       "nom_docteur": "Dr Ligth Yagami",
       "image_docteur": "assets/docteur4.jpg",
       "category": "Genetaliste",
-      "statut": FiltrerStatut.cancel
+      "statut": FiltrerStatut.Annuler
     },
     {
       "nom_docteur": "Dr Kaneki Ken",
       "image_docteur": "assets/docteur1.jpg",
       "category": "Dermatologue",
-      "statut": FiltrerStatut.completed
+      "statut": FiltrerStatut.Complete
     }
   ];
   Alignment _alignment = Alignment.centerLeft;
-  FiltrerStatut statut = FiltrerStatut.upcoming;
+  FiltrerStatut statut = FiltrerStatut.Encours;
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +66,8 @@ class _PageRendezVousState extends State<PageRendezVous> {
                 Container(
                   height: 40,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20)),
+                  decoration:const BoxDecoration(
+                      color: Colors.white,),
                   child: Row(
                     children: [
                       for (FiltrerStatut filtrerStatut in FiltrerStatut.values)
@@ -76,16 +75,16 @@ class _PageRendezVousState extends State<PageRendezVous> {
                             child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              if (filtrerStatut == FiltrerStatut.upcoming) {
-                                statut = FiltrerStatut.upcoming;
+                              if (filtrerStatut == FiltrerStatut.Encours) {
+                                statut = FiltrerStatut.Encours;
                                 _alignment = Alignment.centerLeft;
                               } else if (filtrerStatut ==
-                                  FiltrerStatut.completed) {
-                                statut = FiltrerStatut.completed;
+                                  FiltrerStatut.Complete) {
+                                statut = FiltrerStatut.Complete;
                                 _alignment = Alignment.center;
                               } else if (filtrerStatut ==
-                                  FiltrerStatut.cancel) {
-                                statut = FiltrerStatut.cancel;
+                                  FiltrerStatut.Annuler) {
+                                statut = FiltrerStatut.Annuler;
                                 _alignment = Alignment.centerRight;
                               }
                             });
@@ -128,67 +127,92 @@ class _PageRendezVousState extends State<PageRendezVous> {
                           filtrerSchdule.length - 1 == index;
                       return Card(
                         shape: RoundedRectangleBorder(
-                            side:const BorderSide(
+                            side: const BorderSide(
                               color: Colors.grey,
                             ),
                             borderRadius: BorderRadius.circular(20)),
-                            margin: !estDernierElement ? const EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
-                            child: Padding(padding:const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundImage: AssetImage(schedule["image_docteur"]),
-                                    ),
-                                    const SizedBox(width: 5,),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(schedule["nom_docteur"],style:const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.black,
-                                          fontSize: 15
-                                        ),),
-                                        const SizedBox(height: 3,),                                        
-                                        Text(schedule["category"],style:const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.grey,
-                                          fontSize: 12
-                                        ),)
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                CarteHoraire(colors: Config.primaryColor, date: "Lundi, 11/12/2023", couleurFond: Colors.grey.shade400, heure: "15:00"),
-                              const SizedBox(height: 15,),
+                        margin: !estDernierElement
+                            ? const EdgeInsets.only(bottom: 20)
+                            : EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            children: [
                               Row(
-                                
                                 children: [
-                                Expanded(child: OutlinedButton(onPressed: (){}, 
-                                child:const Text("Annuler",style: TextStyle(
-                                  color: Config.primaryColor
-                                )
-                                ,)
-                                )
-                                ),
-                                const SizedBox(width: 10,),
-                                Expanded(child: OutlinedButton(onPressed: (){}, 
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Config.primaryColor
-                                ),
-                                child:const Text("Reprogrammer",style: TextStyle(
-                                  color: Colors.white
-                                )
-                                ,)
-                                )
-                                ),
-                              ],)
-                              ],
-                            ),
-                            ),
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage:
+                                        AssetImage(schedule["image_docteur"]),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        schedule["nom_docteur"],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.black,
+                                            fontSize: 15),
+                                      ),
+                                      const SizedBox(
+                                        height: 3,
+                                      ),
+                                      Text(
+                                        schedule["category"],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.grey,
+                                            fontSize: 12),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              CarteHoraire(
+                                  colors: Config.primaryColor,
+                                  date: "Lundi, 11/12/2023",
+                                  couleurFond: Colors.grey.shade400,
+                                  heure: "15:00"),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: OutlinedButton(
+                                          onPressed: () {},
+                                          child: const Text(
+                                            "Annuler",
+                                            style: TextStyle(
+                                                color: Config.primaryColor),
+                                          ))),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                      child: OutlinedButton(
+                                          onPressed: () {},
+                                          style: OutlinedButton.styleFrom(
+                                              backgroundColor:
+                                                  Config.primaryColor),
+                                          child: const Text(
+                                            "Reprogrammer",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ))),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
                       );
                     })))
           ],
