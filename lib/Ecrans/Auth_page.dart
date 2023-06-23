@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
+import '../composants/register_form.dart';
+
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
@@ -15,6 +17,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
+  bool _pageConnexion = true;
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -33,34 +36,29 @@ class _AuthPageState extends State<AuthPage> {
             ),
             Config.petitEspacement,
             Text(
-              AppText.enText["text_connexion"]!,
+              _pageConnexion
+                  ? AppText.enText["text_connexion"]!
+                  : AppText.enText["text_inscription"]!,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
             Config.petitEspacement,
-            const FormConnexion(),
-            Boutonconnexion(
-                title: "Connexion",
-                onPressed: () {
-                  Navigator.of(context).pushNamed('main');
-                },
-                width: double.infinity,
-                desactive: false),
+            _pageConnexion ? const FormConnexion() : const RegisterForm(),
             TextButton(
-              onPressed: () {
-                
-              },
-              child: Center(
-                child: Text(
-                  AppText.enText["motDePasse_oublié"]!,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black),
-                ),
-              ),
+              onPressed: () {},
+              child: _pageConnexion
+                  ? Center(
+                      child: Text(
+                        AppText.enText["motDePasse_oublié"]!,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black),
+                      ),
+                    )
+                  : Container(),
             ),
             const SizedBox(
               height: 110,
@@ -78,7 +76,9 @@ class _AuthPageState extends State<AuthPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: const [
                 BoutonSocial(social: "facebook"),
-               SizedBox(width: 10,),
+                SizedBox(
+                  width: 10,
+                ),
                 BoutonSocial(social: "google"),
               ],
             ),
@@ -89,18 +89,27 @@ class _AuthPageState extends State<AuthPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  AppText.enText["text_enregistrement"]!,
+                  _pageConnexion
+                      ? AppText.enText["text_enregistrement"]!
+                      : AppText.enText["text_inscrit"]!,
                   style: TextStyle(
                       color: Colors.grey.shade500,
                       fontWeight: FontWeight.normal,
                       fontSize: 15),
                 ),
-                const Text(
-                  "S'inscrire",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _pageConnexion = !_pageConnexion;
+                    });
+                  },
+                  child: Text(
+                    _pageConnexion ? "S'inscrire" : 'Se connecté',
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                  ),
                 ),
               ],
             )

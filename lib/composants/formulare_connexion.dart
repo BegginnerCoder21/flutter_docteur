@@ -1,7 +1,12 @@
+import 'package:application_docteur/main.dart';
+import 'package:application_docteur/models/auth_model.dart';
+import 'package:application_docteur/providers/dio_provider.dart';
 import 'package:application_docteur/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:application_docteur/composants/Bouton_connexion.dart';
+import 'package:provider/provider.dart';
 
 class FormConnexion extends StatefulWidget {
   const FormConnexion({super.key});
@@ -32,7 +37,9 @@ class _FormConnexionState extends State<FormConnexion> {
                 prefixIcon: Icon(Icons.email_outlined),
                 prefixIconColor: Config.primaryColor),
           ),
-          const SizedBox(height: 15,),
+          const SizedBox(
+            height: 15,
+          ),
           TextFormField(
             controller: _passController,
             keyboardType: TextInputType.visiblePassword,
@@ -56,7 +63,23 @@ class _FormConnexionState extends State<FormConnexion> {
                         : const Icon(Icons.visibility_outlined))),
           ),
           Config.petitEspacement,
-
+          Consumer<AuthModel>(
+            builder: (context, value, child) {
+              return Boutonconnexion(
+                  title: "Connexion",
+                  onPressed: () async {
+                    final token = await DioProvider()
+                        .getToken(_emailController.text, _passController.text);
+                    if (token) {
+                      value.loginSuccess();
+                      MyApp.navigatorKey.currentState!.pushNamed('main');
+                    }
+                    // Navigator.of(context).pushNamed('main');
+                  },
+                  width: double.infinity,
+                  desactive: false);
+            },
+          ),
         ],
       ),
     );

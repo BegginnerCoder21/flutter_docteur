@@ -18,6 +18,7 @@ class _DetailsDocteurState extends State<DetailsDocteur> {
   bool estFav = false;
   @override
   Widget build(BuildContext context) {
+    final docteur = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       appBar: BarClientApp(
         TitreApp: "Les details sur le docteur",
@@ -38,8 +39,8 @@ class _DetailsDocteurState extends State<DetailsDocteur> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            AuSujetDocteur(),
-            const DetailCorps(),
+            AuSujetDocteur(docteur:docteur),
+             DetailCorps(docteur: docteur),
             Padding(
               padding: const EdgeInsets.all(15),
               child: Container(
@@ -49,7 +50,7 @@ class _DetailsDocteurState extends State<DetailsDocteur> {
                   onPressed: () {
                     // nous enmenera sur la page de la liste des rendez-vous
                     setState(() {
-                      Navigator.of(context).pushNamed("ListeRendezVous");
+                      Navigator.of(context).pushNamed("ListeRendezVous",arguments: {"docteur_id":docteur['user_id']});
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -68,14 +69,10 @@ class _DetailsDocteurState extends State<DetailsDocteur> {
   }
 }
 
-class AuSujetDocteur extends StatefulWidget {
-  const AuSujetDocteur({super.key});
+class AuSujetDocteur extends StatelessWidget {
+  AuSujetDocteur({super.key, required this.docteur});
+  Map<dynamic, dynamic> docteur;
 
-  @override
-  State<AuSujetDocteur> createState() => _AuSujetDocteurState();
-}
-
-class _AuSujetDocteurState extends State<AuSujetDocteur> {
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -83,15 +80,16 @@ class _AuSujetDocteurState extends State<AuSujetDocteur> {
       width: double.infinity,
       child: Column(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 60,
             backgroundColor: Colors.white,
-            backgroundImage: AssetImage("assets/docteur2.jpg"),
+            backgroundImage: NetworkImage(
+                "http://10.0.2.2:8000${docteur['docteur_profile']}"),
           ),
           Config.espacementNormal,
-          const Text(
-            "Dr Ayanokôji Kiyotaka",
-            style: TextStyle(
+          Text(
+            "${docteur['docteur_name']}",
+            style: const TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
           ),
           Config.petitEspacement,
@@ -123,7 +121,9 @@ class _AuSujetDocteurState extends State<AuSujetDocteur> {
 }
 
 class DetailCorps extends StatelessWidget {
-  const DetailCorps({super.key});
+  DetailCorps({super.key, required this.docteur});
+
+  Map<dynamic, dynamic> docteur;
 
   @override
   Widget build(BuildContext context) {
@@ -133,16 +133,19 @@ class DetailCorps extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Config.petitEspacement,
-          const InfoDocteur(),
+          InfoDocteur(
+            experience: docteur['experience'],
+            patients: docteur['patients'],
+          ),
           Config.espacementNormal,
           const Text(
             "Au sujet du docteur",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
           ),
           Config.petitEspacement,
-          const Text(
-            "Dr. Ayanokôji Kiyotaka as une experience de dentiste au centre hospitalier universiatiare de treichville. Il est diplomé depuis 2008, et affine son savoir faire au centre hospitalier unversiataire de cocody.",
-            style: TextStyle(
+          Text(
+            "Dr. ${docteur['docteur_name']} as une experience de ${docteur['category']} au centre hospitalier universiatiare de treichville. Il est diplomé depuis 2008, et affine son savoir faire au centre hospitalier unversiataire de cocody.",
+            style: const TextStyle(
                 fontWeight: FontWeight.w500, color: Colors.grey, height: 1.2),
             softWrap: true,
             textAlign: TextAlign.justify,
@@ -154,22 +157,24 @@ class DetailCorps extends StatelessWidget {
 }
 
 class InfoDocteur extends StatelessWidget {
-  const InfoDocteur({super.key});
+  InfoDocteur({super.key, required this.experience, required this.patients});
+  final int experience;
+  final int patients;
 
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Row(
-      children: const [
-        Infocarte(label: "Partients", value: "100"),
-        SizedBox(
+      children: [
+        Infocarte(label: "Partients", value: "$patients"),
+        const SizedBox(
           width: 10,
         ),
-        Infocarte(label: "Experiences", value: "10 ans"),
-        SizedBox(
+        Infocarte(label: "Experiences", value: "$experience"),
+        const SizedBox(
           width: 10,
         ),
-        Infocarte(label: "Notes", value: "4.5"),
+        const Infocarte(label: "Notes", value: "4.5"),
       ],
     ));
   }
@@ -197,7 +202,7 @@ class Infocarte extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w700, color: Colors.black),
+              fontSize: 15, fontWeight: FontWeight.w700, color: Colors.black),
         ),
         const SizedBox(
           height: 5,
@@ -205,7 +210,7 @@ class Infocarte extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-              fontWeight: FontWeight.w700, color: Colors.black, fontSize: 15),
+              fontWeight: FontWeight.w700, color: Colors.black, fontSize: 20),
         )
       ]),
     ));

@@ -7,11 +7,12 @@ import 'package:application_docteur/utils/config.dart';
 
 class CarteDocteur extends StatelessWidget {
   final String route;
-  const CarteDocteur({
+  Map<String, dynamic> docteur = {};
+   CarteDocteur({
     Key? key,
     required this.route,
+    required this.docteur
   }) : super(key: key);
-  
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,8 @@ class CarteDocteur extends StatelessWidget {
               children: [
                 SizedBox(
                     width: Config.tailleLargeur * 0.45,
-                    child: Image.asset(
-                      "assets/docteur2.jpg",
+                    child: Image.network(
+                      "http://10.0.2.2:8000${docteur['docteur_profile']}",
                       fit: BoxFit.fill,
                     )),
                 Flexible(
@@ -38,14 +39,14 @@ class CarteDocteur extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Dr Richard Tan",
-                          style: TextStyle(
+                         Text(
+                          "Dr ${docteur['docteur_name']}",
+                          style:const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
-                        const Text(
-                          'Dentiste',
-                          style: TextStyle(
+                        Text(
+                          "${docteur['category']}",
+                          style:const TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 15),
                         ),
                         const Spacer(),
@@ -82,7 +83,7 @@ class CarteDocteur extends StatelessWidget {
             ),
           ),
           onTap: () {
-            Navigator.of(context).pushNamed(route);
+            Navigator.of(context).pushNamed(route,arguments: docteur);
           } //Rediriger vers les details de l'application,
           ),
     );

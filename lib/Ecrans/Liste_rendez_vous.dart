@@ -1,10 +1,14 @@
 import 'dart:ffi';
 
 import 'package:application_docteur/composants/bar_client_app.dart';
+import 'package:application_docteur/main.dart';
+import 'package:application_docteur/models/rendezvous_conversiondate.dart';
+import 'package:application_docteur/providers/dio_provider.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:application_docteur/utils/config.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -21,11 +25,25 @@ class _ListeRendezVousState extends State<ListeRendezVous> {
   DateTime _focusJours = DateTime.now();
   DateTime _JoursCourant = DateTime.now();
   int? _indexCourant;
-  bool _estWeekend = true;
-  bool _dateSelectionne = false;
+  bool _estWeekend = false;
+  bool _dateSelectionne = true;
   bool _heureSelectionne = false;
+  String? token;
+  Future<void> getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token') ?? '';
+  }
+
+  @override
+  void initState() {
+    getToken();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final docteur = ModalRoute.of(context)!.settings.arguments as Map;
+
     Config().init(context);
     return Scaffold(
       appBar: const BarClientApp(
@@ -115,8 +133,24 @@ class _ListeRendezVousState extends State<ListeRendezVous> {
                     backgroundColor: Config.primaryColor,
                   ),
                   onPressed: _heureSelectionne && _dateSelectionne
-                      ? () {
-                          Navigator.of(context).pushNamed('reservationReussie');
+                      ? () async {
+                          final getdate = DateConvertie.getDate(_JoursCourant);
+                          final gettime = DateConvertie.getTime(_indexCourant!);
+                          final getday =
+                              DateConvertie.getDay(_JoursCourant.weekday);
+
+                          final reservation = await DioProvider().reservation(
+                              getdate,
+                              getday,
+                              gettime,
+                              docteur['docteur_id'],
+                              token!);
+                          if (reservation == 200) {
+                            MyApp.navigatorKey.currentState!
+                                .pushNamed('reservationReussie');
+                          } else {
+                            print(reservation);
+                          }
                         }
                       : null,
                   child: const Text(
